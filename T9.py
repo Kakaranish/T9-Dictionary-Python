@@ -1,5 +1,3 @@
-
-
 class Node:
     def __init__(self):
         self.children = dict()
@@ -76,6 +74,7 @@ class T9Dictionary:
     def showStartingWith(self, word_in_digits):
         word_in_digits_length = len(word_in_digits)
         
+        wordsList = []
         current_node = self.root
         for i in range(word_in_digits_length):
             current_digit = int(word_in_digits[i])
@@ -83,30 +82,100 @@ class T9Dictionary:
             # Jesli w mapie dzieci nie ma dziecka o danej cyfrze(kluczu), to z pewnoscia nie uzyskamy podpowiedzi
             if current_digit not in current_node.children:
                 print('Brak podpowiedzi')
-                return
+                return wordsList
             
             current_node = current_node.children[current_digit]
-                
+             
         def showWords(current_node):
-           for word in current_node.words:
-               print(word + '\t')
-               
-           for key in current_node.children.keys():
-               showWords(current_node.children[key])
-                
+            for word in current_node.words:
+                wordsList.append(word)
+                #print(word)
+           
+            for key in current_node.children.keys():
+                showWords(current_node.children[key])
+        
         showWords(current_node)
-            
+        
+        return wordsList
         
         
     
     
 
-x = T9Dictionary()
+t9 = T9Dictionary()
 #print(x.wordToDigits("absence"))
 #x.prepareDictionary('words10k.txt')
-x.prepareDictionary('words10k.txt')
-#x.showStartingWith('2')
-
-print(x.root.children[2].words)
+t9.prepareDictionary('words10k.txt')
+#print(x.showStartingWith('2'))
+print('a' in x.showStartingWith('22'))
 
 ########################### TK INTER ########################
+from tkinter import *
+
+
+class Calculator:
+    """Calculator that implements addition, subtraction, multiplication, and division. Also 
+    implements a clear button, and a decimal point."""
+
+    def __init__(self, master):
+        self.master = master
+        master.title("Python Calculator")
+		
+        self.display = Entry(master)
+        self.display.grid(column = 0, row = 0, columnspan = 3, sticky = N+E+S+W)
+		
+    
+        self.button_1 = Button(master, text = "clear", command = lambda: self.click_event("C"))
+        self.button_1.grid(column = 0, row = 1, sticky = N+E+W+S)
+    		#self.button_1.bind(1, lambda: self.click_event())
+    		
+        
+        self.button_2 = Button(master, text = "2 abc", command = lambda: self.click_event("2"))
+        self.button_2.grid(column = 1, row = 1, sticky = N+E+W+S)
+        
+        self.button_3 = Button(master, text = "3 def", command = lambda: self.click_event("3"))
+        self.button_3.grid(column = 2, row = 1, sticky = N+E+W+S)
+        
+        self.button_4 = Button(master, text = "4 ghi", command = lambda: self.click_event("4"))
+        self.button_4.grid(column = 0, row = 2, sticky = N+E+W+S)
+        
+        self.button_5 = Button(master, text = "5 jkl", command = lambda: self.click_event("5"))
+        self.button_5.grid(column = 1, row = 2, sticky = N+E+W+S)
+        
+        self.button_6 = Button(master, text = "6 mno", command = lambda: self.click_event("6"))
+        self.button_6.grid(column = 2, row = 2, sticky = N+E+W+S)
+        
+        self.button_7 = Button(master, text = "7 pqrs", command = lambda: self.click_event("7"))
+        self.button_7.grid(column = 0, row = 3, sticky = N+E+W+S)
+        
+        self.button_8 = Button(master, text = "8 tuv", command = lambda: self.click_event("8"))
+        self.button_8.grid(column = 1, row = 3, sticky = N+E+W+S)
+        
+        self.button_9 = Button(master, text = "9 wxyz", command = lambda: self.click_event("9"))
+        self.button_9.grid(column = 2, row = 3, sticky = N+E+W+S)
+
+        self.listbox = Listbox(master)
+        self.listbox.grid(column=0, row = 4,sticky = N+E+W+S, columnspan=3)
+        
+        
+        for row in range(5):
+            master.rowconfigure(row, weight = 1)
+        
+        for column in range(3):
+            master.columnconfigure(column, weight = 1)
+    
+    def click_event(self, key):
+        if key == "C":
+            self.display.delete(0, END)
+            self.listbox.delete('0','end')
+        else:
+            self.listbox.delete(0,END)
+            self.display.insert(END, key)
+            words_list = t9.showStartingWith(self.display.get())
+            
+            for word in words_list:
+                self.listbox.insert(END, word)
+                
+root = Tk()
+app = Calculator(root)
+root.mainloop()
