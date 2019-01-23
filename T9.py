@@ -103,23 +103,15 @@ class T9Dictionary:
     
 
 t9 = T9Dictionary()
-#print(x.wordToDigits("absence"))
-#x.prepareDictionary('words10k.txt')
 t9.prepareDictionary('words10k.txt')
-#print(x.showStartingWith('2'))
-print('a' in x.showStartingWith('22'))
 
 ########################### TK INTER ########################
 from tkinter import *
 
-
 class Calculator:
-    """Calculator that implements addition, subtraction, multiplication, and division. Also 
-    implements a clear button, and a decimal point."""
-
     def __init__(self, master):
         self.master = master
-        master.title("Python Calculator")
+        master.title("T9 dictionary")
 		
         self.display = Entry(master)
         self.display.grid(column = 0, row = 0, columnspan = 3, sticky = N+E+S+W)
