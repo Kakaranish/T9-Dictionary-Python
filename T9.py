@@ -39,86 +39,74 @@ class T9Dictionary:
                 
     def insertWord(self, word):
         word = word.lower()
+        word = word.rstrip()
         word_in_digits = self.wordToDigits(word)
-        word_length = len(word)
+        word_in_digits_length = len(word_in_digits)
         
-        currentNodeChildren = self.root.children
-        
-        word_exists = True
-        
-        for i in range(word_length):
-            current_digit = str(word_in_digits[i])
-        
+        current_node = self.root
+        word_exists = True       
+        for i in range(word_in_digits_length):
+            current_digit = int(word_in_digits[i])
+
             # Sprawdzamy czy w slowniku dzieci aktualnego wezla znajduje sie dana cyfra (klucz)
-            if current_digit in currentNodeChildren and word_exists:
+            if current_digit in current_node.children and word_exists:
                 
                 # Znalezlismy dany klucz wsrod dzieci, dlatego mozemy przejsc do przeszukiwania dzieci dla kolejnej cyfry (klucza)
-                currentNodeChildren =  currentNodeChildren[current_digit]
+                current_node = current_node.children[current_digit]
                 
                 # Jesli cyfra, ktora aktualnie sprawdzalismy jest ostatnia dla danego slowa
-                # to sprawdzamy czy dodawane slowo (word) znajduje sie w zbiorze slow
-                if i == word_length - 1 and word not in currentNodeChildren[current_digit].words:
-                    currentNodeChildren[current_digit].words.add(word)
-                    continue
-                
-             
-            word_exists = False
-            tempNode = Node()
-            if(i == word_length - 1):
-                tempNode.words.add(word)
-            currentNodeChildren[current_digit] = tempNode
-            currentNodeChildren = currentNodeChildren[current_digit]
-            
-            
-            
-            # ------------- End of loop ---------------
+                # to sprawdzamy czy dodawane slowo (word) znajduje sie juz w zbiorze slow
+                if i == word_in_digits_length - 1 and word not in current_node.words:
+                    current_node.words.add(word)
         
+                continue
+                
+            # Jesli co najmniej raz nie udalo sie znalezc dziecka z danym kluczem, to ta czesc bedzie sie wykonywala do konca
+
+            word_exists = False
+            current_node.children[current_digit] = Node()
+            if i == word_in_digits_length - 1:
+                current_node.children[current_digit].words.add(word)
+
+            
+            current_node = current_node.children[current_digit]      
+            
+        # ------------- End of loop ---------------
+        
+    def showStartingWith(self, word_in_digits):
+        word_in_digits_length = len(word_in_digits)
+        
+        current_node = self.root
+        for i in range(word_in_digits_length):
+            current_digit = int(word_in_digits[i])
+            
+            # Jesli w mapie dzieci nie ma dziecka o danej cyfrze(kluczu), to z pewnoscia nie uzyskamy podpowiedzi
+            if current_digit not in current_node.children:
+                print('Brak podpowiedzi')
+                return
+            
+            current_node = current_node.children[current_digit]
+                
+        def showWords(current_node):
+           for word in current_node.words:
+               print(word + '\t')
+               
+           for key in current_node.children.keys():
+               showWords(current_node.children[key])
+                
+        showWords(current_node)
+            
         
         
     
     
 
 x = T9Dictionary()
-#print(x.wordToDigits("pores"))
+#print(x.wordToDigits("absence"))
+#x.prepareDictionary('words10k.txt')
 x.prepareDictionary('words10k.txt')
+#x.showStartingWith('2')
 
+print(x.root.children[2].words)
 
-"""
-class Trie {
-protected:
-	std::string wordToDigits(std::string word);
-	Node head;
-public:
-	bool prepareDictionary(std::string path);
-	void insert(std::string word);
-	void showStartingWith(std::string digits);
-};F
-
-"""
-
-"""
-std::string Trie::wordToDigits(std::string word) {
-	std::stringstream ss;
-	char ch;
-	for (unsigned i = 0; i < word.length(); i++) {
-		ch = word[i];
-		if (ch >= 'a' && ch <= 'c')
-			ss << 2;
-		else if (ch >= 'd' && ch <= 'f')
-			ss << 3;
-		else if (ch >= 'g' && ch <= 'i')
-			ss << 4;
-		else if (ch >= 'j' && ch <= 'l')
-			ss << 5;
-		else if (ch >= 'm' && ch <= 'o')
-			ss << 6;
-		else if (ch >= 'p' && ch <= 's')
-			ss << 7;
-		else if (ch >= 't' && ch <= 'v')
-			ss << 8;
-		else if (ch >= 'w' && ch <= 'z')
-			ss << 9;
-	}
-	return ss.str();
-}
-    """
+########################### TK INTER ########################
